@@ -1,0 +1,6 @@
+---
+name: WraithPortal
+version: 0.0.1
+main: tatchan\WraithPortal\Main
+api: 3.19.0
+...

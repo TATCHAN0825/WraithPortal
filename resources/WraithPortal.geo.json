@@ -1,0 +1,52 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.WraithPortal",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "bb_main",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-5, 0, 0], "size": [9, 1, 1], "uv": [23, 21]},
+						{"origin": [-9, 4, 0], "size": [1, 14, 1], "uv": [24, 0]},
+						{"origin": [-5, 21, 0], "size": [9, 1, 1], "uv": [22, 19]},
+						{"origin": [7, 4, 0], "size": [1, 14, 1], "uv": [23, 23]},
+						{"origin": [-7, 2, 0], "size": [1, 1, 1], "uv": [28, 8]},
+						{"origin": [-8, 3, 0], "size": [1, 1, 1], "uv": [28, 6]},
+						{"origin": [-7, 19, 0], "size": [1, 1, 1], "uv": [28, 4]},
+						{"origin": [-6, 20, 0], "size": [1, 1, 1], "uv": [28, 2]},
+						{"origin": [5, 19, 0], "size": [1, 1, 1], "uv": [28, 0]},
+						{"origin": [6, 18, 0], "size": [1, 1, 1], "uv": [27, 27]},
+						{"origin": [5, 2, 0], "size": [1, 1, 1], "uv": [27, 25]},
+						{"origin": [6, 3, 0], "size": [1, 1, 1], "uv": [27, 23]},
+						{"origin": [-6, 1, 0], "size": [1, 1, 1], "uv": [27, 16]},
+						{"origin": [-8, 18, 0], "size": [1, 1, 1], "uv": [27, 14]},
+						{"origin": [4, 20, 0], "size": [1, 1, 1], "uv": [24, 17]},
+						{"origin": [4, 1, 0], "size": [1, 1, 1], "uv": [24, 15]}
+					]
+				},
+				{
+					"name": "bb_nakami",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-8, 4, 0], "size": [1, 14, 1], "uv": [8, 21]},
+						{"origin": [6, 4, 0], "size": [1, 14, 1], "uv": [12, 21]},
+						{"origin": [-7, 3, 0], "size": [1, 16, 1], "uv": [0, 21]},
+						{"origin": [5, 3, 0], "size": [1, 16, 1], "uv": [4, 21]},
+						{"origin": [4, 2, 0], "size": [1, 18, 1], "uv": [20, 0]},
+						{"origin": [-6, 2, 0], "size": [1, 18, 1], "uv": [19, 20]},
+						{"origin": [-5, 1, 0], "size": [9, 20, 1], "uv": [0, 0]}
+					]
+				}
+			]
+		}
+	]
+}
