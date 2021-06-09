@@ -7,7 +7,6 @@ namespace tatchan\WraithPortal;
 use pocketmine\entity\Entity;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\level\particle\PortalParticle;
 use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
@@ -86,7 +85,7 @@ class PortalRecordingTask extends Task {
     }
 
     public function onRun(int $currentTick) {
-        if ((!PortalManger::getInstance()->isset($this->player->getName())) or PortalManger::getInstance()->taskhandlerget($this->player->getName())->isCancelled()) {
+        if ((!PortalManger::getInstance()->isset($this->player->getName())) || PortalManger::getInstance()->taskhandlerget($this->player->getName())->isCancelled()) {
             $this->getHandler()->cancel();
             return;
         }
