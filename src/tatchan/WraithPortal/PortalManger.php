@@ -14,7 +14,6 @@ use pocketmine\utils\Config;
 class PortalManger
 {
     private static PortalManger $instance;
-    private array $portal;
     private Config $config;
     private array $taskhandlers = [];
     private Main $plugin;
@@ -89,8 +88,7 @@ class PortalManger
 
     public function getportalentity(Position $position) {
         /** @var WraithPortal|null $portal */
-        $portal = $position->getLevelNonNull()->getNearestEntity($position, 1, WraithPortal::class);
-        return $portal;
+        return $position->getLevelNonNull()->getNearestEntity($position, 1, WraithPortal::class);
     }
 
   public function save():void{
