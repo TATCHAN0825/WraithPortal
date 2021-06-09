@@ -18,6 +18,7 @@ class PortalManger
     private Config $config;
     private array $taskhandlers = [];
     private Main $plugin;
+    private array $teleporting = [];
 
     public function __construct(Main $plugin) {
         $this->config = new Config($plugin->getDataFolder() . "PoertalData.yml", Config::YAML);
@@ -99,6 +100,9 @@ class PortalManger
         $this->config->setAll([]);
   }
   public function useportal(Position $position, Player $player){
+        if ($this->teleporting[$player->getName()] ?? false) {
+            return;
+        }
       $p = $this->config->get(self::fromVector3($position));
       $r = false;
       if (isset($p["startpos"])) {//finishのぽーたる
@@ -106,8 +110,12 @@ class PortalManger
           $r = true;
       }
       $portalPos = new Position($p["x"], $p["y"], $p["z"], Server::getInstance()->getLevelByName($p["worldname"]));
+      $this->teleporting[$player->getName()] = true;
       $this->plugin->getScheduler()->scheduleRepeatingTask(new PortalTpTask($this->getportalentity($portalPos), $player, $r), 20);
   }
+    public function setTeleporting(Player  $player, bool $b) {
+        $this->teleporting[$player->getName()] = $b;
+    }
     /**
      * Vector3から識別子を生成する
      * WARNING: 小数点以下が切り捨てられます

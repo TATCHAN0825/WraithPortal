@@ -86,7 +86,7 @@ class PortalRecordingTask extends Task {
     }
 
     public function onRun(int $currentTick) {
-        if (PortalManger::getInstance()->taskhandlerget($this->player->getName())->isCancelled()) {
+        if ((!PortalManger::getInstance()->isset($this->player->getName())) or PortalManger::getInstance()->taskhandlerget($this->player->getName())->isCancelled()) {
             $this->getHandler()->cancel();
             return;
         }
@@ -119,8 +119,10 @@ class PortalTpTask extends Task {
     public function onRun(int $currentTick) {
         if (!isset($this->positions[$this->i])) {
             $this->getHandler()->cancel();
+            PortalManger::getInstance()->setTeleporting($this->player, false);
             return;
         }
+        $this->player->sendMessage($this->positions[$this->i]->asPosition()->__toString());
         $this->player->teleport($this->positions[$this->i]);
         ++$this->i;
     }
