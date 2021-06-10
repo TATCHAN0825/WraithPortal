@@ -1,10 +1,12 @@
 <?php
 
-namespace tatchan\WraithPortal;
+namespace tatchan\WraithPortal\task;
 
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use pocketmine\utils\TextFormat;
+use tatchan\WraithPortal\PortalManger;
+use tatchan\WraithPortal\WraithPortal;
 
 class PortalCrateTask extends Task
 {
@@ -41,6 +43,7 @@ class PortalCrateTask extends Task
         if($dis < 0){
             PortalManger::getInstance()->finishportal($this->player,$this->portal);
             PortalManger::getInstance()->startportal($this->portal);
+            PortalManger::getInstance()->unsetplayerhandler($this->player->getName());
             $this->getHandler()->cancel();
         }
     }
