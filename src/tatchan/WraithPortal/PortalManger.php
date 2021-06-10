@@ -160,26 +160,33 @@ class PortalManger
             );
     }
     public function WhenUsingPortalSite(Player $player){
-        $data = new CompoundTag("",[
-            new CompoundTag("minecraft:bounds", [
-                new StringTag("dimension", "overworld"),
-                new ListTag("max", [
-                    new IntTag("", 100),
-                    new IntTag("",200),
-                    new IntTag("",300)
-                ]),
-                new ListTag("min", [
-                    new IntTag("", 10),
-                    new IntTag("",20),
-                    new IntTag("",30)
-                ]),
-            ]),
-            new CompoundTag("minecraft:fog", [
-                new StringTag("fog_identifier", ""),
-                new IntTag("priority", 1)
-            ]),
+        $data = new CompoundTag("", [
+	        new CompoundTag("minecraft:volume", [
+		        new CompoundTag("description", [
+			        new StringTag("identifier", "test:fog_toka_test"),
+		        ]),
+		        new CompoundTag("components", [
+			        new CompoundTag("minecraft:bounds", [
+				        new ListTag("max", [
+					        new IntTag("", 300),
+					        new IntTag("", 255),
+					        new IntTag("", 300),
+				        ]),
+				        new ListTag("min", [
+					        new IntTag("", -300),
+					        new IntTag("", 0),
+					        new IntTag("", -300),
+				        ]),
+				        new StringTag("dimension", "overworld"),
+			        ]),
+			        new CompoundTag("minecraft:fog", [
+				        new StringTag("fog_identifier", "minecraft:fog_the_end"),
+				        new IntTag("priority", 1),
+			        ]),
+		        ]),
+	        ]),
         ]);
-        $pk = AddVolumeEntityPacket::create(EntityIds::PLAYER,$data);
+        $pk = AddVolumeEntityPacket::create(1, $data);//$entityNetId = fog id
         $player->sendDataPacket($pk);
     }
 
