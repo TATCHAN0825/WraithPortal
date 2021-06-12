@@ -85,7 +85,7 @@ class PortalManger
     /**
      * @return Position[]
      */
-    public function getxyz(Position $position){
+    public function getposition(Position $position){
         $p = $this->config->get(self::fromVector3($position));
         $positions = [];
         foreach ($p["history"] as $pos){
