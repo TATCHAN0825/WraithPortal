@@ -7,6 +7,7 @@ namespace tatchan\WraithPortal;
 use pocketmine\entity\Entity;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use tatchan\WraithPortal\task\PortalCrateTask;
@@ -65,6 +66,18 @@ class Main extends PluginBase implements Listener
                 PortalManger::getInstance()->unsetplayerhandler($name);
                 PortalManger::getInstance()->finishportal($event->getPlayer()->getPosition(), $th->getTask()->getPortal());
                 $event->getPlayer()->sendMessage("ポータルを設置");
+            }
+        }
+    }
+    public function onMove(PlayerMoveEvent $event){
+        $player =$event->getPlayer();
+        if (PortalManger::getInstance()->isTeleporting($player)) {
+            return;
+        }
+
+        if(($portal = PortalManger::getInstance()->getLastPortal($player)) !== null){
+            if($portal->distance($player) > 4){//ポータルからnブロック以上離れたら(出たらからポータル)
+                PortalManger::getInstance()->setLastPortal($player, null);
             }
         }
     }

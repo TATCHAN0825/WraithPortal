@@ -10,7 +10,6 @@ use tatchan\WraithPortal\WraithPortal;
 
 class PortalCrateTask extends Task
 {
-    private static $instance;
     private Player $player;
     private WraithPortal $portal;
     private float $defdistance;
@@ -44,6 +43,7 @@ class PortalCrateTask extends Task
             PortalManger::getInstance()->finishportal($this->player,$this->portal);
             PortalManger::getInstance()->startportal($this->portal);
             PortalManger::getInstance()->unsetplayerhandler($this->player->getName());
+            PortalManger::getInstance()->setLastPortal($this->player, $this->portal);
             $this->getHandler()->cancel();
         }
     }

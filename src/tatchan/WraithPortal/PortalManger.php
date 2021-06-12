@@ -109,7 +109,6 @@ class PortalManger
         }
 
       $p = $this->config->get(self::fromVector3($position));
-      $r = false;
       if (isset($p["startpos"])) {//finishのぽーたる
           assert(is_string($p["startpos"]), "startposの値がおかしい...");
           $finished = $p["status"] === "finish";
@@ -129,6 +128,9 @@ class PortalManger
             return;
           }
           $finished = $p2["status"] === "finish";
+      }
+      if (!$finished) {
+          return;
       }
       $portalPos = new Position($p["x"], $p["y"], $p["z"], Server::getInstance()->getLevelByName($p["worldname"]));
       $this->teleporting[$player->getName()] = true;
