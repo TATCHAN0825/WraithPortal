@@ -64,7 +64,9 @@ class Main extends PluginBase implements Listener
                 $th = PortalManger::getInstance()->taskhandlerget($name);
                 $th->cancel();
                 PortalManger::getInstance()->unsetplayerhandler($name);
-                PortalManger::getInstance()->finishportal($event->getPlayer()->getPosition(), $th->getTask()->getPortal());
+                /** @var PortalCrateTask $task */
+                $task = $th->getTask();
+                PortalManger::getInstance()->finishportal($event->getPlayer()->getPosition(), $task->getPortal());
                 $event->getPlayer()->sendMessage("ポータルを設置");
             }
         }

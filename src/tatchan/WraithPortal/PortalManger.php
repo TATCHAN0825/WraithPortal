@@ -23,6 +23,8 @@ class PortalManger
     private Config $config;
     private array $taskhandlers = [];
     private Main $plugin;
+    /** @var WraithPortal[] */
+    private array $lastPortals = [];
     private array $teleporting = [];
 
     public function __construct(Main $plugin) {
@@ -104,7 +106,7 @@ class PortalManger
         $this->config->setAll([]);
   }
   public function useportal(Position $position, Player $player){
-        if ($this->teleporting[$player->getName()] ?? false) {
+        if ($this->isTeleporting($player)) {
             return;
         }
 
@@ -133,13 +135,24 @@ class PortalManger
           return;
       }
       $portalPos = new Position($p["x"], $p["y"], $p["z"], Server::getInstance()->getLevelByName($p["worldname"]));
-      $this->teleporting[$player->getName()] = true;
-      $this->plugin->getScheduler()->scheduleRepeatingTask(new PortalTpTask($this->getportalentity($portalPos), $player, $r), 1);
+      /** @var WraithPortal $portal */
+      $portal = $this->getportalentity($portalPos);
+      $this->setTeleporting($player, true);
+      $this->plugin->getScheduler()->scheduleRepeatingTask(new PortalTpTask($portal, $player, $r), 1);
       //$effect = new EffectInstance(Effect::getEffect(Effect::BLINDNESS), 256, 1, false);
    //$player->addEffect($effect);
     }
-    public function setTeleporting(Player  $player, bool $b) {
-        $this->teleporting[$player->getName()] = $b;
+    public function setLastPortal(Player  $player, ?WraithPortal $p) {
+        $this->lastPortals[$player->getName()] = $p;
+    }
+    public function getLastPortal(Player $player){
+        return $this->lastPortals[$player->getName()]??null;
+    }
+    public function setTeleporting(Player  $player,bool $teleporting){
+        $this->teleporting[$player->getName()] = $teleporting;
+    }
+    public function isTeleporting(Player  $player){
+        return $this->teleporting[$player->getName()] ?? false;
     }
     /**
      * Vector3から識別子を生成する
