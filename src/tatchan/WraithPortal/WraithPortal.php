@@ -6,15 +6,11 @@ use pocketmine\entity\Human;
 use pocketmine\entity\Skin;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\level\Level;
-use pocketmine\math\AxisAlignedBB;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
-use pocketmine\Server;
 
-class WraithPortal extends Human
-{
+class WraithPortal extends Human {
     protected $gravity = 0;
-
 
     public function __construct(Level $level, CompoundTag $nbt) {
         $this->setSkin(new Skin(
@@ -39,9 +35,5 @@ class WraithPortal extends Human
     }
 
     public function attack(EntityDamageEvent $source): void {
-
     }
-
-
-
 }

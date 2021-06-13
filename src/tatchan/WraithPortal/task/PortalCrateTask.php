@@ -8,8 +8,7 @@ use pocketmine\utils\TextFormat;
 use tatchan\WraithPortal\PortalManger;
 use tatchan\WraithPortal\WraithPortal;
 
-class PortalCrateTask extends Task
-{
+class PortalCrateTask extends Task {
     private Player $player;
     private WraithPortal $portal;
     private float $defdistance;
@@ -23,10 +22,12 @@ class PortalCrateTask extends Task
         $this->lastDistance = $this->player->distance($this->portal);
         $this->distance = 0;
     }
+
     public function cancel() {
         $this->getHandler()->cancel();
     }
-    public function isAlive(){
+
+    public function isAlive() {
         return $this->portal->isAlive();
     }
 
@@ -39,8 +40,8 @@ class PortalCrateTask extends Task
             $this->distance++;
         }
         $this->player->sendActionBarMessage(TextFormat::YELLOW . round($dis = $this->defdistance - $this->distance, 2));
-        if($dis < 0){
-            PortalManger::getInstance()->finishportal($this->player,$this->portal);
+        if ($dis < 0) {
+            PortalManger::getInstance()->finishportal($this->player, $this->portal);
             PortalManger::getInstance()->startportal($this->portal);
             PortalManger::getInstance()->unsetplayerhandler($this->player->getName());
             PortalManger::getInstance()->setLastPortal($this->player, $this->portal);

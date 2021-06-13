@@ -13,8 +13,7 @@ use pocketmine\utils\Config;
 use tatchan\WraithPortal\task\PortalCrateTask;
 use tatchan\WraithPortal\task\PortalRecordingTask;
 
-class Main extends PluginBase implements Listener
-{
+class Main extends PluginBase implements Listener {
     public static $resourcePath;
 
     /**
@@ -71,14 +70,14 @@ class Main extends PluginBase implements Listener
             }
         }
     }
-    public function onMove(PlayerMoveEvent $event){
-        $player =$event->getPlayer();
+
+    public function onMove(PlayerMoveEvent $event) {
+        $player = $event->getPlayer();
         if (PortalManger::getInstance()->isTeleporting($player)) {
             return;
         }
-
-        if(($portal = PortalManger::getInstance()->getLastPortal($player)) !== null){
-            if($portal->distance($player) > 4){//ポータルからnブロック以上離れたら(出たらからポータル)
+        if (($portal = PortalManger::getInstance()->getLastPortal($player)) !== null) {
+            if ($portal->distance($player) > 4) {//ポータルからnブロック以上離れたら(出たらからポータル)
                 PortalManger::getInstance()->setLastPortal($player, null);
             }
         }

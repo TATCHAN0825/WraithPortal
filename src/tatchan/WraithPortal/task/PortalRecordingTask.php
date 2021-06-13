@@ -7,8 +7,7 @@ use pocketmine\scheduler\Task;
 use tatchan\WraithPortal\PortalManger;
 use tatchan\WraithPortal\WraithPortal;
 
-class PortalRecordingTask extends Task
-{
+class PortalRecordingTask extends Task {
     /** @var WraithPortal */
     private $portal;
     /** @var Player */
