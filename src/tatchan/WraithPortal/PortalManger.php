@@ -68,11 +68,6 @@ class PortalManger {
 
     }
 
-    public function getstatus(Position $position): string {
-        $p = $this->config->get(self::fromVector3($position));
-        return $p["status"];
-    }
-
     public function savexyz(Position $position, Position $xyz): void {
         $p = $this->config->get(self::fromVector3($position));
         $p["history"][] = [
@@ -217,10 +212,6 @@ class PortalManger {
 
     public function taskhandlerset(string $name, TaskHandler $handler): void {
         $this->taskhandlers[$name] = $handler;
-    }
-
-    public function resettaskhandler(): void {
-        $this->taskhandlers = [];
     }
 
     public function unsetplayerhandler(string $name): void {
