@@ -118,11 +118,10 @@ class PortalManger {
         } else {//startのぽーたるだったら
             $r = false;
             foreach ($this->config->getAll() as $v) {
-                if (isset($v["startpos"])) {//finishポータルか？
-                    if ($v["startpos"] === self::fromVector3($position)) {
-                        $p2 = $v;//みつかった
-                        break;
-                    }
+                //finishポータルであって、startポータルに対応するポータルか？
+                if (isset($v["startpos"]) && $v["startpos"] === self::fromVector3($position)) {
+                    $p2 = $v;//みつかった
+                    break;
                 }
             }
             if (!isset($p2)) {//finishぽーたる見つからんかった...

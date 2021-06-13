@@ -10,7 +10,6 @@ use tatchan\WraithPortal\PortalManger;
 use tatchan\WraithPortal\WraithPortal;
 
 class PortalTpTask extends Task {
-    private WraithPortal $portal;
     private Player $player;
     /** @var Position[] */
     private array $positions;
@@ -20,7 +19,6 @@ class PortalTpTask extends Task {
      * @param bool $reverse false => start to finish, true => finish to start
      */
     public function __construct(WraithPortal $portal, Player $player, bool $reverse) {
-        $this->portal = $portal;
         $this->player = $player;
         $this->positions = PortalManger::getInstance()->getposition($portal);
         if ($reverse) {

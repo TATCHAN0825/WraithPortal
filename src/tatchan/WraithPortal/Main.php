@@ -25,7 +25,7 @@ class Main extends PluginBase implements Listener {
         for ($y = 0; $y < imagesy($image); $y++) {
             for ($x = 0; $x < imagesx($image); $x++) {
                 $rgba = @imagecolorat($image, $x, $y);
-                $a = ((~((int)($rgba >> 24))) << 1) & 0xff;
+                $a = ((~(($rgba >> 24))) << 1) & 0xff;
                 $r = ($rgba >> 16) & 0xff;
                 $g = ($rgba >> 8) & 0xff;
                 $b = $rgba & 0xff;
@@ -51,7 +51,7 @@ class Main extends PluginBase implements Listener {
 
     public function ontap(PlayerInteractEvent $event): void {
         $name = $event->getPlayer()->getName();
-        if ($this->getConfig()->get("itemid") == $event->getItem()->getId()) {
+        if ($this->getConfig()->get("itemid") === $event->getItem()->getId()) {
             $distance = $this->getConfig()->get("distanceblock");
             if (!PortalManger::getInstance()->isset($name)) {
                 $entity = PortalManger::getInstance()->createportal($event->getPlayer()->getPosition());
@@ -76,10 +76,8 @@ class Main extends PluginBase implements Listener {
         if (PortalManger::getInstance()->isTeleporting($player)) {
             return;
         }
-        if (($portal = PortalManger::getInstance()->getLastPortal($player)) !== null) {
-            if ($portal->distance($player) > 4) {//ポータルからnブロック以上離れたら(出たらからポータル)
-                PortalManger::getInstance()->setLastPortal($player, null);
-            }
+        if ((($portal = PortalManger::getInstance()->getLastPortal($player)) !== null) && $portal->distance($player) > 4) {//ポータルからnブロック以上離れたら(出たらからポータル)
+            PortalManger::getInstance()->setLastPortal($player, null);
         }
     }
 }
