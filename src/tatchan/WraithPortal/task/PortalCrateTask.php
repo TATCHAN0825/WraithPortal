@@ -23,15 +23,15 @@ class PortalCrateTask extends Task {
         $this->distance = 0;
     }
 
-    public function cancel() {
+    public function cancel(): void {
         $this->getHandler()->cancel();
     }
 
-    public function isAlive() {
+    public function isAlive(): bool {
         return $this->portal->isAlive();
     }
 
-    public function onRun(int $currentTick) {
+    public function onRun(int $currentTick): bool {
         if (!$this->portal->isAlive()) {
             $this->getHandler()->cancel();
             return;
@@ -49,9 +49,6 @@ class PortalCrateTask extends Task {
         }
     }
 
-    /**
-     * @return WraithPortal
-     */
     public function getPortal(): WraithPortal {
         return $this->portal;
     }

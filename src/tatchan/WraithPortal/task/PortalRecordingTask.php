@@ -8,17 +8,15 @@ use tatchan\WraithPortal\PortalManger;
 use tatchan\WraithPortal\WraithPortal;
 
 class PortalRecordingTask extends Task {
-    /** @var WraithPortal */
-    private $portal;
-    /** @var Player */
-    private $player;
+    private WraithPortal $portal;
+    private Player $player;
 
     public function __construct(WraithPortal $portal, Player $player) {
         $this->portal = $portal;
         $this->player = $player;
     }
 
-    public function onRun(int $currentTick) {
+    public function onRun(int $currentTick): void {
         if ((!PortalManger::getInstance()->isset($this->player->getName())) || PortalManger::getInstance()->taskhandlerget($this->player->getName())->isCancelled()) {
             $this->getHandler()->cancel();
             return;

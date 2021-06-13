@@ -14,7 +14,7 @@ use tatchan\WraithPortal\task\PortalCrateTask;
 use tatchan\WraithPortal\task\PortalRecordingTask;
 
 class Main extends PluginBase implements Listener {
-    public static $resourcePath;
+    public static string $resourcePath;
 
     /**
      * 与えられたパスのpngファイルからバイトを生成する
@@ -36,7 +36,7 @@ class Main extends PluginBase implements Listener {
         return $bytes;
     }
 
-    public function onEnable() {
+    public function onEnable(): void {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         self::$resourcePath = $this->getFile() . "resources/";
         Entity::registerEntity(WraithPortal::class, true, ["tatchan:wraithportal"]);
@@ -45,11 +45,11 @@ class Main extends PluginBase implements Listener {
         (new PortalManger($this));
     }
 
-    public function onDisable() {
+    public function onDisable(): void {
         PortalManger::getInstance()->save();
     }
 
-    public function ontap(PlayerInteractEvent $event) {
+    public function ontap(PlayerInteractEvent $event): void {
         $name = $event->getPlayer()->getName();
         if ($this->getConfig()->get("itemid") == $event->getItem()->getId()) {
             $distance = $this->getConfig()->get("distanceblock");
@@ -71,7 +71,7 @@ class Main extends PluginBase implements Listener {
         }
     }
 
-    public function onMove(PlayerMoveEvent $event) {
+    public function onMove(PlayerMoveEvent $event): void {
         $player = $event->getPlayer();
         if (PortalManger::getInstance()->isTeleporting($player)) {
             return;

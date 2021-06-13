@@ -36,7 +36,7 @@ class PortalManger {
         return self::$instance;
     }
 
-    public function createportal(Position $position) {
+    public function createportal(Position $position): WraithPortal {
         /** @var WraithPortal $entity */
         $entity = Entity::createEntity("tatchan:wraithportal", $position->getLevel(), WraithPortal::createBaseNBT($position));
         $entity->spawnToAll();
@@ -51,13 +51,14 @@ class PortalManger {
         return $entity;
     }
 
-    public function startportal(Position $position) {
+    public function startportal(Position $position): void {
         $p = $this->config->get(self::fromVector3($position));
         $p["status"] = "start";
         $this->config->set(self::fromVector3($position), $p);
     }
 
-    public function finishportal(Position $position, Position $startpos) {
+    public function finishportal(Position $position, Position $startpos): void {
+        /** @var WraithPortal $entity */
         $entity = Entity::createEntity("tatchan:wraithportal", $position->getLevel(), WraithPortal::createBaseNBT($position));
         $entity->spawnToAll();
         $p = $this->config->get(self::fromVector3($position));
@@ -67,12 +68,12 @@ class PortalManger {
 
     }
 
-    public function getstatus(Position $position) {
+    public function getstatus(Position $position): string {
         $p = $this->config->get(self::fromVector3($position));
         return $p["status"];
     }
 
-    public function savexyz(Position $position, Position $xyz) {
+    public function savexyz(Position $position, Position $xyz): void {
         $p = $this->config->get(self::fromVector3($position));
         $p["history"][] = [
             "x" => $xyz->x,
@@ -86,7 +87,7 @@ class PortalManger {
     /**
      * @return Position[]
      */
-    public function getposition(Position $position) {
+    public function getposition(Position $position): array {
         $p = $this->config->get(self::fromVector3($position));
         $positions = [];
         foreach ($p["history"] as $pos) {
@@ -95,20 +96,21 @@ class PortalManger {
         return $positions;
     }
 
-    public function getportalentity(Position $position) {
+    public function getportalentity(Position $position): ?WraithPortal {
         /** @var WraithPortal|null $portal */
-        return $position->getLevelNonNull()->getNearestEntity($position, 1, WraithPortal::class);
+        $portal = $position->getLevelNonNull()->getNearestEntity($position, 1, WraithPortal::class);
+        return $portal;
     }
 
     public function save(): void {
         $this->config->save();
     }
 
-    public function reset() {
+    public function reset(): void {
         $this->config->setAll([]);
     }
 
-    public function useportal(Position $position, Player $player) {
+    public function useportal(Position $position, Player $player): void {
         if ($this->isTeleporting($player)) {
             return;
         }
@@ -145,19 +147,19 @@ class PortalManger {
         //$player->addEffect($effect);
     }
 
-    public function setLastPortal(Player $player, ?WraithPortal $p) {
+    public function setLastPortal(Player $player, ?WraithPortal $p): void {
         $this->lastPortals[$player->getName()] = $p;
     }
 
-    public function getLastPortal(Player $player) {
+    public function getLastPortal(Player $player): ?WraithPortal {
         return $this->lastPortals[$player->getName()] ?? null;
     }
 
-    public function setTeleporting(Player $player, bool $teleporting) {
+    public function setTeleporting(Player $player, bool $teleporting): void {
         $this->teleporting[$player->getName()] = $teleporting;
     }
 
-    public function isTeleporting(Player $player) {
+    public function isTeleporting(Player $player): bool {
         return $this->teleporting[$player->getName()] ?? false;
     }
 
@@ -181,7 +183,7 @@ class PortalManger {
             );
     }
 
-    public function WhenUsingPortalSite(Player $player) {
+    public function WhenUsingPortalSite(Player $player): void {
         $data = new CompoundTag("", [
             new CompoundTag("minecraft:bounds", [
                 new StringTag("dimension", "overworld"),
@@ -205,7 +207,7 @@ class PortalManger {
         $player->sendDataPacket($pk);
     }
 
-    public function isset(string $name) {
+    public function isset(string $name): bool {
         return isset($this->taskhandlers[$name]);
     }
 
@@ -213,15 +215,15 @@ class PortalManger {
         return $this->taskhandlers[$name];
     }
 
-    public function taskhandlerset(string $name, TaskHandler $handler) {
+    public function taskhandlerset(string $name, TaskHandler $handler): void {
         $this->taskhandlers[$name] = $handler;
     }
 
-    public function resettaskhandler() {
+    public function resettaskhandler(): void {
         $this->taskhandlers = [];
     }
 
-    public function unsetplayerhandler(string $name) {
+    public function unsetplayerhandler(string $name): void {
         unset($this->taskhandlers[$name]);
     }
 }
