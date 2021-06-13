@@ -5,6 +5,7 @@ namespace tatchan\WraithPortal\task;
 use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\scheduler\TaskHandler;
 use tatchan\WraithPortal\PortalManger;
 use tatchan\WraithPortal\WraithPortal;
 
@@ -33,7 +34,9 @@ class PortalTpTask extends Task {
 
     public function onRun(int $currentTick): void {
         if (!isset($this->positions[$this->i])) {
-            $this->getHandler()->cancel();
+            /** @var TaskHandler $handler */
+            $handler = $this->getHandler();
+            $handler->cancel();
             PortalManger::getInstance()->setTeleporting($this->player, false);
             return;
         }

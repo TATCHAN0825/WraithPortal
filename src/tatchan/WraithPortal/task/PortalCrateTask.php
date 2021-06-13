@@ -4,6 +4,7 @@ namespace tatchan\WraithPortal\task;
 
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\scheduler\TaskHandler;
 use pocketmine\utils\TextFormat;
 use tatchan\WraithPortal\PortalManger;
 use tatchan\WraithPortal\WraithPortal;
@@ -25,7 +26,9 @@ class PortalCrateTask extends Task {
 
     public function onRun(int $currentTick): void {
         if (!$this->portal->isAlive()) {
-            $this->getHandler()->cancel();
+            /** @var TaskHandler $handler */
+            $handler = $this->getHandler();
+            $handler->cancel();
             return;
         }
         if ($this->lastDistance !== ($this->lastDistance = $this->player->distance($this->portal))) {
@@ -37,7 +40,9 @@ class PortalCrateTask extends Task {
             PortalManger::getInstance()->startportal($this->portal);
             PortalManger::getInstance()->unsetplayerhandler($this->player->getName());
             PortalManger::getInstance()->setLastPortal($this->player, $this->portal);
-            $this->getHandler()->cancel();
+            /** @var TaskHandler $handler */
+            $handler = $this->getHandler();
+            $handler->cancel();
         }
     }
 

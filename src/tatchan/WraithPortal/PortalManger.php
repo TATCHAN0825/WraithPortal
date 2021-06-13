@@ -74,7 +74,7 @@ class PortalManger {
             "x" => $xyz->x,
             "y" => $xyz->y,
             "z" => $xyz->z,
-            "worldname" => $xyz->getLevel()->getName()
+            "worldname" => $xyz->getLevelNonNull()->getName()
         ];
         $this->config->set(self::fromVector3($position), $p);
     }
@@ -133,9 +133,16 @@ class PortalManger {
         if (!$finished) {
             return;
         }
-        $portalPos = new Position($p["x"], $p["y"], $p["z"], Server::getInstance()->getLevelByName($p["worldname"]));
-        /** @var WraithPortal $portal */
+        $level = Server::getInstance()->getLevelByName($p["worldname"]);
+        if ($level === null) {
+            Server::getInstance()->getLevelByName($p["worldname"]);
+            $level = Server::getInstance()->getLevelByName($p["worldname"]);
+        }
+        $portalPos = new Position($p["x"], $p["y"], $p["z"], $level);
         $portal = $this->getportalentity($portalPos);
+        if ($portal === null) {
+            return;//what
+        }
         $this->setTeleporting($player, true);
         $this->plugin->getScheduler()->scheduleRepeatingTask(new PortalTpTask($portal, $player, $r), 1);
         //$effect = new EffectInstance(Effect::getEffect(Effect::BLINDNESS), 256, 1, false);
@@ -173,7 +180,7 @@ class PortalManger {
             . floor($vector3->getZ())
             . (
             $vector3 instanceof Position && $vector3->isValid()
-                ? ":" . $vector3->getLevel()->getName()
+                ? ":" . $vector3->getLevelNonNull()->getName()
                 : ""
             );
     }

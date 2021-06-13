@@ -4,6 +4,7 @@ namespace tatchan\WraithPortal\task;
 
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\scheduler\TaskHandler;
 use tatchan\WraithPortal\PortalManger;
 use tatchan\WraithPortal\WraithPortal;
 
@@ -18,7 +19,9 @@ class PortalRecordingTask extends Task {
 
     public function onRun(int $currentTick): void {
         if ((!PortalManger::getInstance()->isset($this->player->getName())) || PortalManger::getInstance()->taskhandlerget($this->player->getName())->isCancelled()) {
-            $this->getHandler()->cancel();
+            /** @var TaskHandler $handler */
+            $handler = $this->getHandler();
+            $handler->cancel();
             return;
         }
         PortalManger::getInstance()->savexyz($this->portal, $this->player);
