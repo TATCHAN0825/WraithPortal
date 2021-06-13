@@ -20,7 +20,7 @@ class PortalTpTask extends Task {
      */
     public function __construct(WraithPortal $portal, Player $player, bool $reverse) {
         $this->player = $player;
-        $this->positions = PortalManger::getInstance()->getposition($portal);
+        $this->positions = PortalManger::getInstance()->gethistory($portal);
         if ($reverse) {
             $this->positions = array_reverse($this->positions);
         }

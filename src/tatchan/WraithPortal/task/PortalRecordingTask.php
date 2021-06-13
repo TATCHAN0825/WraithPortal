@@ -24,6 +24,6 @@ class PortalRecordingTask extends Task {
             $handler->cancel();
             return;
         }
-        PortalManger::getInstance()->savexyz($this->portal, $this->player);
+        PortalManger::getInstance()->addhistory($this->portal, $this->player);
     }
 }

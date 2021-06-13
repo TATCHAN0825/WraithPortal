@@ -68,7 +68,7 @@ class PortalManger {
 
     }
 
-    public function savexyz(Position $position, Position $xyz): void {
+    public function addhistory(Position $position, Position $xyz): void {
         $p = $this->config->get(self::fromVector3($position));
         $p["history"][] = [
             "x" => $xyz->x,
@@ -82,7 +82,7 @@ class PortalManger {
     /**
      * @return Position[]
      */
-    public function getposition(Position $position): array {
+    public function gethistory(Position $position): array {
         $p = $this->config->get(self::fromVector3($position));
         $positions = [];
         foreach ($p["history"] as $pos) {
