@@ -17,8 +17,7 @@ use pocketmine\Server;
 use pocketmine\utils\Config;
 use tatchan\WraithPortal\task\PortalTpTask;
 
-class PortalManger
-{
+class PortalManger {
     private static PortalManger $instance;
     private Config $config;
     private array $taskhandlers = [];
@@ -31,17 +30,16 @@ class PortalManger
         $this->config = new Config($plugin->getDataFolder() . "PoertalData.yml", Config::YAML);
         $this->plugin = $plugin;
         self::$instance = $this;
-
     }
 
     public static function getInstance(): self {
         return self::$instance;
     }
 
-  public function createportal(Position $position){
-      /** @var WraithPortal $entity */
-      $entity = Entity::createEntity("tatchan:wraithportal", $position->getLevel(), WraithPortal::createBaseNBT($position));
-      $entity->spawnToAll();
+    public function createportal(Position $position): WraithPortal {
+        /** @var WraithPortal $entity */
+        $entity = Entity::createEntity("tatchan:wraithportal", $position->getLevel(), WraithPortal::createBaseNBT($position));
+        $entity->spawnToAll();
         $this->config->set(self::fromVector3($position), [
             "x" => $position->getX(),
             "y" => $position->getY(),
@@ -51,14 +49,16 @@ class PortalManger
             "history" => []
         ]);
         return $entity;
-  }
+    }
 
-    public function startportal(Position $position){
+    public function startportal(Position $position): void {
         $p = $this->config->get(self::fromVector3($position));
         $p["status"] = "start";
         $this->config->set(self::fromVector3($position), $p);
     }
-    public function finishportal(Position $position, Position $startpos){
+
+    public function finishportal(Position $position, Position $startpos): void {
+        /** @var WraithPortal $entity */
         $entity = Entity::createEntity("tatchan:wraithportal", $position->getLevel(), WraithPortal::createBaseNBT($position));
         $entity->spawnToAll();
         $p = $this->config->get(self::fromVector3($position));
@@ -67,17 +67,14 @@ class PortalManger
         $this->config->set(self::fromVector3($position), $p);
 
     }
-    public function getstatus(Position $position){
-        $p = $this->config->get(self::fromVector3($position));
-        return $p["status"];
-    }
-    public function savexyz(Position $position,Position $xyz){
+
+    public function addhistory(Position $position, Position $xyz): void {
         $p = $this->config->get(self::fromVector3($position));
         $p["history"][] = [
             "x" => $xyz->x,
             "y" => $xyz->y,
             "z" => $xyz->z,
-            "worldname" => $xyz->getLevel()->getName()
+            "worldname" => $xyz->getLevelNonNull()->getName()
         ];
         $this->config->set(self::fromVector3($position), $p);
     }
@@ -85,83 +82,95 @@ class PortalManger
     /**
      * @return Position[]
      */
-    public function getposition(Position $position){
+    public function gethistory(Position $position): array {
         $p = $this->config->get(self::fromVector3($position));
         $positions = [];
-        foreach ($p["history"] as $pos){
+        foreach ($p["history"] as $pos) {
             $positions[] = new Position($pos["x"], $pos["y"], $pos["z"], Server::getInstance()->getLevelByName($pos["worldname"]));
         }
         return $positions;
     }
 
-    public function getportalentity(Position $position) {
+    public function getportalentity(Position $position): ?WraithPortal {
         /** @var WraithPortal|null $portal */
-        return $position->getLevelNonNull()->getNearestEntity($position, 1, WraithPortal::class);
+        $portal = $position->getLevelNonNull()->getNearestEntity($position, 1, WraithPortal::class);
+        return $portal;
     }
 
-  public function save():void{
+    public function save(): void {
         $this->config->save();
-  }
-  public function reset(){
+    }
+
+    public function reset(): void {
         $this->config->setAll([]);
-  }
-  public function useportal(Position $position, Player $player){
+    }
+
+    public function useportal(Position $position, Player $player): void {
         if ($this->isTeleporting($player)) {
             return;
         }
-
-      $p = $this->config->get(self::fromVector3($position));
-      if (isset($p["startpos"])) {//finishのぽーたる
-          assert(is_string($p["startpos"]), "startposの値がおかしい...");
-          $finished = $p["status"] === "finish";
-          $p = $this->config->get($p["startpos"]);//startのぽーたるの$pをとる
-          $r = true;
-      } else {//startのぽーたるだったら
-          $r = false;
-          foreach ($this->config->getAll() as $v) {
-              if(isset($v["startpos"])) {//finishポータルか？
-                  if ($v["startpos"] === self::fromVector3($position)) {
-                      $p2 = $v;//みつかった
-                      break;
-                  }
-              }
-          }
-          if (!isset($p2)) {//finishぽーたる見つからんかった...
+        $p = $this->config->get(self::fromVector3($position));
+        if (isset($p["startpos"])) {//finishのぽーたる
+            assert(is_string($p["startpos"]), "startposの値がおかしい...");
+            $finished = $p["status"] === "finish";
+            $p = $this->config->get($p["startpos"]);//startのぽーたるの$pをとる
+            $r = true;
+        } else {//startのぽーたるだったら
+            $r = false;
+            foreach ($this->config->getAll() as $v) {
+                //finishポータルであって、startポータルに対応するポータルか？
+                if (isset($v["startpos"]) && $v["startpos"] === self::fromVector3($position)) {
+                    $p2 = $v;//みつかった
+                    break;
+                }
+            }
+            if (!isset($p2)) {//finishぽーたる見つからんかった...
+                return;
+            }
+            $finished = $p2["status"] === "finish";
+        }
+        if (!$finished) {
             return;
-          }
-          $finished = $p2["status"] === "finish";
-      }
-      if (!$finished) {
-          return;
-      }
-      $portalPos = new Position($p["x"], $p["y"], $p["z"], Server::getInstance()->getLevelByName($p["worldname"]));
-      /** @var WraithPortal $portal */
-      $portal = $this->getportalentity($portalPos);
-      $this->setTeleporting($player, true);
-      $this->plugin->getScheduler()->scheduleRepeatingTask(new PortalTpTask($portal, $player, $r), 1);
-      //$effect = new EffectInstance(Effect::getEffect(Effect::BLINDNESS), 256, 1, false);
-   //$player->addEffect($effect);
+        }
+        $level = Server::getInstance()->getLevelByName($p["worldname"]);
+        if ($level === null) {
+            Server::getInstance()->getLevelByName($p["worldname"]);
+            $level = Server::getInstance()->getLevelByName($p["worldname"]);
+        }
+        $portalPos = new Position($p["x"], $p["y"], $p["z"], $level);
+        $portal = $this->getportalentity($portalPos);
+        if ($portal === null) {
+            return;//what
+        }
+        $this->setTeleporting($player, true);
+        $this->plugin->getScheduler()->scheduleRepeatingTask(new PortalTpTask($portal, $player, $r), 1);
+        //$effect = new EffectInstance(Effect::getEffect(Effect::BLINDNESS), 256, 1, false);
+        //$player->addEffect($effect);
     }
-    public function setLastPortal(Player  $player, ?WraithPortal $p) {
+
+    public function setLastPortal(Player $player, ?WraithPortal $p): void {
         $this->lastPortals[$player->getName()] = $p;
     }
-    public function getLastPortal(Player $player){
-        return $this->lastPortals[$player->getName()]??null;
+
+    public function getLastPortal(Player $player): ?WraithPortal {
+        return $this->lastPortals[$player->getName()] ?? null;
     }
-    public function setTeleporting(Player  $player,bool $teleporting){
+
+    public function setTeleporting(Player $player, bool $teleporting): void {
         $this->teleporting[$player->getName()] = $teleporting;
     }
-    public function isTeleporting(Player  $player){
+
+    public function isTeleporting(Player $player): bool {
         return $this->teleporting[$player->getName()] ?? false;
     }
+
     /**
      * Vector3から識別子を生成する
      * WARNING: 小数点以下が切り捨てられます
      *
      * @param Vector3|Position $vector3
      */
-    public static function fromVector3(Vector3 $vector3): string
-    {
+    public static function fromVector3(Vector3 $vector3): string {
         return
             floor($vector3->getX())
             . ":"
@@ -170,23 +179,24 @@ class PortalManger
             . floor($vector3->getZ())
             . (
             $vector3 instanceof Position && $vector3->isValid()
-                ? ":" . $vector3->getLevel()->getName()
+                ? ":" . $vector3->getLevelNonNull()->getName()
                 : ""
             );
     }
-    public function WhenUsingPortalSite(Player $player){
-        $data = new CompoundTag("",[
+
+    public function WhenUsingPortalSite(Player $player): void {
+        $data = new CompoundTag("", [
             new CompoundTag("minecraft:bounds", [
                 new StringTag("dimension", "overworld"),
                 new ListTag("max", [
                     new IntTag("", 100),
-                    new IntTag("",200),
-                    new IntTag("",300)
+                    new IntTag("", 200),
+                    new IntTag("", 300)
                 ]),
                 new ListTag("min", [
                     new IntTag("", 10),
-                    new IntTag("",20),
-                    new IntTag("",30)
+                    new IntTag("", 20),
+                    new IntTag("", 30)
                 ]),
             ]),
             new CompoundTag("minecraft:fog", [
@@ -194,25 +204,23 @@ class PortalManger
                 new IntTag("priority", 1)
             ]),
         ]);
-        $pk = AddVolumeEntityPacket::create(EntityIds::PLAYER,$data);
+        $pk = AddVolumeEntityPacket::create(EntityIds::PLAYER, $data);
         $player->sendDataPacket($pk);
     }
 
-  public function isset(string $name){
+    public function isset(string $name): bool {
         return isset($this->taskhandlers[$name]);
-  }
+    }
 
-  public function taskhandlerget(string $name):TaskHandler{
+    public function taskhandlerget(string $name): TaskHandler {
         return $this->taskhandlers[$name];
-  }
-  public function taskhandlerset(string $name,TaskHandler $handler) {
-        $this->taskhandlers[$name] = $handler;
-  }
-  public function resettaskhandler(){
-      $this->taskhandlers = [];
-  }
-  public function unsetplayerhandler(string $name){
-        unset($this->taskhandlers[$name]);
-  }
+    }
 
+    public function taskhandlerset(string $name, TaskHandler $handler): void {
+        $this->taskhandlers[$name] = $handler;
+    }
+
+    public function unsetplayerhandler(string $name): void {
+        unset($this->taskhandlers[$name]);
+    }
 }

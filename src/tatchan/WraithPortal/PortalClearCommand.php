@@ -9,8 +9,7 @@ use pocketmine\command\PluginCommand;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
 
-class PortalClearCommand extends PluginCommand implements CommandExecutor
-{
+class PortalClearCommand extends PluginCommand implements CommandExecutor {
     public function __construct(Plugin $owner) {
         parent::__construct("portalclear", $owner);
         $this->setDescription("aiueo");
@@ -25,7 +24,6 @@ class PortalClearCommand extends PluginCommand implements CommandExecutor
                 if ($entity instanceof WraithPortal) {
                     $entity->kill();
                     $count++;
-
                 }
             }
         }

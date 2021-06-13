@@ -4,12 +4,12 @@ namespace tatchan\WraithPortal\task;
 
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\scheduler\TaskHandler;
 use pocketmine\utils\TextFormat;
 use tatchan\WraithPortal\PortalManger;
 use tatchan\WraithPortal\WraithPortal;
 
-class PortalCrateTask extends Task
-{
+class PortalCrateTask extends Task {
     private Player $player;
     private WraithPortal $portal;
     private float $defdistance;
@@ -23,34 +23,29 @@ class PortalCrateTask extends Task
         $this->lastDistance = $this->player->distance($this->portal);
         $this->distance = 0;
     }
-    public function cancel() {
-        $this->getHandler()->cancel();
-    }
-    public function isAlive(){
-        return $this->portal->isAlive();
-    }
 
-    public function onRun(int $currentTick) {
+    public function onRun(int $currentTick): void {
         if (!$this->portal->isAlive()) {
-            $this->getHandler()->cancel();
+            /** @var TaskHandler $handler */
+            $handler = $this->getHandler();
+            $handler->cancel();
             return;
         }
         if ($this->lastDistance !== ($this->lastDistance = $this->player->distance($this->portal))) {
             $this->distance++;
         }
         $this->player->sendActionBarMessage(TextFormat::YELLOW . round($dis = $this->defdistance - $this->distance, 2));
-        if($dis < 0){
-            PortalManger::getInstance()->finishportal($this->player,$this->portal);
+        if ($dis < 0) {
+            PortalManger::getInstance()->finishportal($this->player, $this->portal);
             PortalManger::getInstance()->startportal($this->portal);
             PortalManger::getInstance()->unsetplayerhandler($this->player->getName());
             PortalManger::getInstance()->setLastPortal($this->player, $this->portal);
-            $this->getHandler()->cancel();
+            /** @var TaskHandler $handler */
+            $handler = $this->getHandler();
+            $handler->cancel();
         }
     }
 
-    /**
-     * @return WraithPortal
-     */
     public function getPortal(): WraithPortal {
         return $this->portal;
     }
