@@ -31,7 +31,7 @@ class PortalCrateTask extends Task {
         return $this->portal->isAlive();
     }
 
-    public function onRun(int $currentTick): bool {
+    public function onRun(int $currentTick): void {
         if (!$this->portal->isAlive()) {
             $this->getHandler()->cancel();
             return;
