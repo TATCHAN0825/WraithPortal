@@ -78,7 +78,8 @@ class Main extends PluginBase implements Listener
         }
 
         if(($portal = PortalManger::getInstance()->getLastPortal($player)) !== null){
-            if($portal->distance($player) > 4){//ポータルからnブロック以上離れたら(出たらからポータル)
+            if($portal->distance($player) > 2.1){//ポータルからnブロック以上離れたら(出たらからポータル)
+                $player->sendMessage("ぽーたるからでたああああああああああああああ2.1");
                 PortalManger::getInstance()->setLastPortal($player, null);
             }
         }

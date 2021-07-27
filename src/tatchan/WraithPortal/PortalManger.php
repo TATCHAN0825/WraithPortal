@@ -65,6 +65,7 @@ class PortalManger
         $p["status"] = "finish";
         $p["startpos"] = self::fromVector3($startpos);
         $this->config->set(self::fromVector3($position), $p);
+        return $entity;
 
     }
     public function getstatus(Position $position){
@@ -94,9 +95,10 @@ class PortalManger
         return $positions;
     }
 
-    public function getportalentity(Position $position) {
-        /** @var WraithPortal|null $portal */
-        return $position->getLevelNonNull()->getNearestEntity($position, 1, WraithPortal::class);
+    public function getportalentity(Position $position):WraithPortal {
+        /** @var WraithPortal|null $e */
+        $e = $position->getLevelNonNull()->getNearestEntity($position, 1, WraithPortal::class);
+        return $e;
     }
 
   public function save():void{
@@ -109,7 +111,9 @@ class PortalManger
         if ($this->isTeleporting($player)) {
             return;
         }
-
+        if ($this->getLastPortal($player) !== null) {
+            return;
+        }
       $p = $this->config->get(self::fromVector3($position));
       if (isset($p["startpos"])) {//finishのぽーたる
           assert(is_string($p["startpos"]), "startposの値がおかしい...");
@@ -134,6 +138,7 @@ class PortalManger
       if (!$finished) {
           return;
       }
+      $player->setInvisible(true);
       $portalPos = new Position($p["x"], $p["y"], $p["z"], Server::getInstance()->getLevelByName($p["worldname"]));
       /** @var WraithPortal $portal */
       $portal = $this->getportalentity($portalPos);
@@ -153,6 +158,7 @@ class PortalManger
     }
     public function isTeleporting(Player  $player){
         return $this->teleporting[$player->getName()] ?? false;
+
     }
     /**
      * Vector3から識別子を生成する

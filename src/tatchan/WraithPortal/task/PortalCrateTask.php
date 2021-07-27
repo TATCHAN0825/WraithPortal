@@ -10,6 +10,7 @@ use tatchan\WraithPortal\WraithPortal;
 
 class PortalCrateTask extends Task
 {
+    private static $instance;
     private Player $player;
     private WraithPortal $portal;
     private float $defdistance;
