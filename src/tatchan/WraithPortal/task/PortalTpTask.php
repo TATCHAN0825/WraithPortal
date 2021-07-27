@@ -8,27 +8,22 @@ use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\scheduler\TaskHandler;
 use tatchan\WraithPortal\PortalManger;
 use tatchan\WraithPortal\WraithPortal;
 
-class PortalTpTask extends Task
-{
-    /** @var WraithPortal */
-    private $portal;
-    /** @var Player */
-    private $player;
+class PortalTpTask extends Task {
+    private Player $player;
     /** @var Position[] */
-    private $positions;
-    /** @var int */
-    private $i = 0;
+    private array $positions;
+    private int $i = 0;
 
     /**
      * @param bool $reverse false => start to finish, true => finish to start
      */
     public function __construct(WraithPortal $portal, Player $player, bool $reverse) {
-        $this->portal = $portal;
         $this->player = $player;
-        $this->positions = PortalManger::getInstance()->getposition($portal);
+        $this->positions = PortalManger::getInstance()->gethistory($portal);
         if ($reverse) {
             $this->positions = array_reverse($this->positions);
         }
@@ -38,9 +33,11 @@ class PortalTpTask extends Task
         //$lastPos->z += $firstPos->z < $lastPos->z ? 2 : -2;
     }
 
-    public function onRun(int $currentTick) {
+    public function onRun(int $currentTick): void {
         if (!isset($this->positions[$this->i])) {
-            $this->getHandler()->cancel();
+            /** @var TaskHandler $handler */
+            $handler = $this->getHandler();
+            $handler->cancel();
             PortalManger::getInstance()->setTeleporting($this->player, false);
             PortalManger::getInstance()->setLastPortal($this->player, PortalManger::getInstance()->getportalentity($this->positions[array_key_last($this->positions)]));
             return;

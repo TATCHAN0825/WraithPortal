@@ -13,9 +13,8 @@ use pocketmine\utils\Config;
 use tatchan\WraithPortal\task\PortalCrateTask;
 use tatchan\WraithPortal\task\PortalRecordingTask;
 
-class Main extends PluginBase implements Listener
-{
-    public static $resourcePath;
+class Main extends PluginBase implements Listener {
+    public static string $resourcePath;
 
     /**
      * 与えられたパスのpngファイルからバイトを生成する
@@ -26,7 +25,7 @@ class Main extends PluginBase implements Listener
         for ($y = 0; $y < imagesy($image); $y++) {
             for ($x = 0; $x < imagesx($image); $x++) {
                 $rgba = @imagecolorat($image, $x, $y);
-                $a = ((~((int)($rgba >> 24))) << 1) & 0xff;
+                $a = ((~(($rgba >> 24))) << 1) & 0xff;
                 $r = ($rgba >> 16) & 0xff;
                 $g = ($rgba >> 8) & 0xff;
                 $b = $rgba & 0xff;
@@ -37,7 +36,7 @@ class Main extends PluginBase implements Listener
         return $bytes;
     }
 
-    public function onEnable() {
+    public function onEnable(): void {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         self::$resourcePath = $this->getFile() . "resources/";
         Entity::registerEntity(WraithPortal::class, true, ["tatchan:wraithportal"]);
@@ -46,13 +45,13 @@ class Main extends PluginBase implements Listener
         (new PortalManger($this));
     }
 
-    public function onDisable() {
+    public function onDisable(): void {
         PortalManger::getInstance()->save();
     }
 
-    public function ontap(PlayerInteractEvent $event) {
+    public function ontap(PlayerInteractEvent $event): void {
         $name = $event->getPlayer()->getName();
-        if ($this->getConfig()->get("itemid") == $event->getItem()->getId()) {
+        if ($this->getConfig()->get("itemid") === $event->getItem()->getId()) {
             $distance = $this->getConfig()->get("distanceblock");
             if (!PortalManger::getInstance()->isset($name)) {
                 $entity = PortalManger::getInstance()->createportal($event->getPlayer()->getPosition());
@@ -71,17 +70,14 @@ class Main extends PluginBase implements Listener
             }
         }
     }
-    public function onMove(PlayerMoveEvent $event){
-        $player =$event->getPlayer();
+
+    public function onMove(PlayerMoveEvent $event): void {
+        $player = $event->getPlayer();
         if (PortalManger::getInstance()->isTeleporting($player)) {
             return;
         }
-
-        if(($portal = PortalManger::getInstance()->getLastPortal($player)) !== null){
-            if($portal->distance($player) > 2.1){//ポータルからnブロック以上離れたら(出たらからポータル)
-                $player->sendMessage("ぽーたるからでたああああああああああああああ2.1");
-                PortalManger::getInstance()->setLastPortal($player, null);
-            }
+        if ((($portal = PortalManger::getInstance()->getLastPortal($player)) !== null) && $portal->distance($player) > 4) {//ポータルからnブロック以上離れたら(出たらからポータル)
+            PortalManger::getInstance()->setLastPortal($player, null);
         }
     }
 }
